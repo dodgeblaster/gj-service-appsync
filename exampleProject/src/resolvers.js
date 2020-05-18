@@ -22,24 +22,24 @@ module.exports = {
             }
         },
 
-        // getProduct: {
-        //     type: 'DYNAMO',
-        //     action: 'GET',
-        //     table: 'example'
-        // }
+        getProduct: {
+            type: 'DYNAMODB',
+            action: 'GET',
+            table: 'int-test-appsyncdb'
+        }
     },
 
     Mutation: {
-        // createProduct: {
-        //     type: 'DYNAMO',
-        //     action: 'CREATE',
-        //     table: 'example'
-        // },
+        createProduct: {
+            type: 'DYNAMODB',
+            action: 'CREATE',
+            table: 'int-test-appsyncdb'
+        },
 
-        // removeProduct: {
-        //     type: 'DYNAMO',
-        //     action: 'REMOVE',
-        //     table: 'example'
-        // },
+        removeProduct: {
+            type: 'DYNAMODB',
+            action: 'REMOVE',
+            table: 'int-test-appsyncdb'
+        },
     }
 }

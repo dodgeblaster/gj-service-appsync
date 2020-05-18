@@ -29,7 +29,7 @@ module.exports = {
             }
 
             if (typeof file.Query[k] === 'object') {
-                if (file.Query[k].type === 'DYNAMO') {
+                if (file.Query[k].type === 'DYNAMODB') {
 
                     list.Query.push({
                         name: k,
@@ -56,7 +56,7 @@ module.exports = {
             }
 
             if (typeof file.Mutation[k] === 'object') {
-                if (file.Mutation[k].type === 'DYNAMO') {
+                if (file.Mutation[k].type === 'DYNAMODB') {
 
                     list.Mutation.push({
                         name: k,
@@ -210,33 +210,40 @@ module.exports = {
 
 
     getServerlessYml: async (projectRoot) => {
-        let res = ''
-        try {
-            res = await readServerlessYml(projectRoot)
-        } catch (e) {
-            if (e.message.includes('no such file or directory')) {
-                throw new Error('Deploying requires a serverless.yml file at the root of project')
-            }
-            throw new Error(e)
-        }
-
-
-        if (!res.inputs) {
-
-            return {
-                projectName: res.name,
-                accountId: false,
-                region: 'us-east-1',
-                env: []
-            }
-        }
-
-
+        const res = require(projectRoot + '/config.js')
         return {
             projectName: res.name,
-            accountId: res.inputs.accountId || false,
-            region: res.inputs.region || 'us-east-1',
-            env: res.inputs.environment || []
+            accountId: false,
+            region: res.region || 'us-east-1',
+            env: res.environment || []
         }
+        // let res = ''
+        // try {
+        //     res = await readServerlessYml(projectRoot)
+        // } catch (e) {
+        //     if (e.message.includes('no such file or directory')) {
+        //         throw new Error('Deploying requires a serverless.yml file at the root of project')
+        //     }
+        //     throw new Error(e)
+        // }
+
+
+        // if (!res.inputs) {
+
+        //     return {
+        //         projectName: res.name,
+        //         accountId: false,
+        //         region: 'us-east-1',
+        //         env: []
+        //     }
+        // }
+
+
+        // return {
+        //     projectName: res.name,
+        //     accountId: res.inputs.accountId || false,
+        //     region: res.inputs.region || 'us-east-1',
+        //     env: res.inputs.environment || []
+        // }
     }
 }

@@ -2,74 +2,110 @@ const buildInstructions = require('./logic')
 const lambda = require('gj-aws-lambda')
 const appsync = require('gj-aws-appsync')
 const iam = require('gj-aws-iam')
-const slsState = require('gj-state')
+const state = require('gj-state')
 
 
 
 
 
-module.exports = async (PROJECT_ROOT, SRC_LOCATION) => {
+module.exports.deploy = async (PROJECT_ROOT, SRC_LOCATION) => {
     console.log('Deploying...')
 
+
+
     /**
-     * Build Instructions
-     * 
-     * 1. Get all neccessary input from:
-     *      - serverless.yml state
-     *      - existing state from previous deployments
-     *      - users project structure
-     * 
-     * 2. Take care of all logic based on above inputs, and build instructions
+     * 1. Build Instructions
      * 
      */
     const instructions = await buildInstructions(PROJECT_ROOT, SRC_LOCATION)
 
 
    
-   
-
+    /**
+     * 2. Create / Update MonoLambda
+     * 
+     */
     const appsyncLambdaRole = instructions.projectInfo.name.split(' ').join('') + '-lambda-role'
-    const appsyncLambdaName = instructions.projectInfo.name.split(' ').join('') + '-lambda'
-    // return
-    console.log('-- appsyncLambdaRole -- ', appsyncLambdaRole)
-    await iam.createRoleForLambda({
-        state: '',
-        name: appsyncLambdaRole
-    }) 
+    const appsyncLambdaName = instructions.projectInfo.name.split(' ').join('') + '-lambda'   
+    if (instructions.monolambda.iamRole === 'CREATE') {
+        await iam.createRoleForLambda({
+            state: '',
+            name: appsyncLambdaRole
+        })
 
-   
+        await lambda.create({
+            srcLocation: PROJECT_ROOT + SRC_LOCATION,
+            zipLocation: PROJECT_ROOT + "/.serverless/code.zip",
+            name: appsyncLambdaName,
+            handler: "index.handler",
+            role: `arn:aws:iam::${ACCOUNT_ID}:role/${appsyncLambdaRole}`,
+        })
+    }
 
+    if (instructions.monolambda.lambdaCode === 'UPDATE') {
+        console.log('UPDATING CODE...')
+        await lambda.updateCode({
+            srcLocation: PROJECT_ROOT + SRC_LOCATION,
+            zipLocation: PROJECT_ROOT + "/.serverless/code.zip",
+            name: appsyncLambdaName,
+        })
+    }
 
-    await lambda.create({
-        srcLocation: PROJECT_ROOT + SRC_LOCATION, // path to location 
-        zipLocation: PROJECT_ROOT + "/.serverless/code.zip", // path to location 
-        name: appsyncLambdaName, // name of function 
-        handler: 'index.handler', // file and method inside zip
-        role: 'arn:aws:iam::251256923172:role/' + appsyncLambdaRole // iam role arn 
-    })
-    const appsyncData = await appsync(instructions.appsync)
+    if (instructions.monolambda.lambdaConfig === 'UPDATE') {
+        console.log('mock UPDATING LAMBDA CONFIG...')
+    }
+    
+    
+
+    /**
+     * 3. Create / Update Appsync
+     * 
+     */
+    const appsyncData = await appsync.deploy(instructions.appsync)
+
 
 
     /**
-     * Write State
-     * 
+     * 4.Write State
      * At the end of all this, we want to write the state to a local file. 
-     * Currently, we are just writing the appsync api id, which is all we need for 
-     * now when we run the remove script.
      * 
      */
     const data = {
         apiId: appsyncData.apiId,
         apiName: appsyncData.apiName,
-        // schemaChecksum: appsyncState.schemaChecksum,
-        // lambdaDatasourceRole: appsyncState.lambdaDatasourceRole,
-
-        // lambdaConfigChecksum: 'example',
-        lambdaRoleRole: appsyncLambdaRole,
-        lambdaRole: appsyncLambdaName,
+        appsyncLambdaRole: appsyncLambdaRole,
+        appsyncLambdaName: appsyncLambdaName,
+        datasourceRoles: instructions.appsync.datasourceIamRoles.create.map(x => x.name)
     }
 
     
-    await slsState().write(PROJECT_ROOT, data)
+    await state('none', '/.config/state.js').write(PROJECT_ROOT, data)
     console.log('Successfully Deployed!')
+}
+
+
+
+module.exports.remove = async (PROJECT_ROOT, SRC_LOCATION) => {
+    const stateRes = await state('none', '/.config/state.js').read(PROJECT_ROOT)
+
+    // iam role lambda
+    await iam.removeRole(stateRes.appsyncLambdaRole)
+    console.log('removed iam lambda role')
+
+    // lambade
+    await lambda.remove(stateRes.appsyncLambdaName)
+    console.log('removed lambda')
+
+    // data source iams
+    for (const dsRole of stateRes.datasourceRoles) {
+        await iam.removeRole(dsRole)
+        console.log('removed datasource role')
+    }
+ 
+
+    // appsync
+    await appsync.remove(stateRes.apiId)
+    console.log('removed api')
+
+    await state('none', '/.config/state.js').remove(PROJECT_ROOT)
 }

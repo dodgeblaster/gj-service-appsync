@@ -21,10 +21,10 @@ const logic = require('./logic')
 
 module.exports = async (projectRoot, srcLocation) => {
     const slsYml = await getYml(projectRoot)
-    const slsState = await state().read()
+    const slsState = await state('none', '/.config/state.js').read()
     const schema = await getSchema(projectRoot)
     const resolvers = await usersProject.getResolversBasedOnFile(projectRoot)
-    const accountId = slsYml.inputs.accountId || await awsAccount.getAccountId()
+    const accountId = slsYml.accountId || await awsAccount.getAccountId()
     // const schema = await usersProject.getUsersSchema(projectRoot, srcLocation)
     
 

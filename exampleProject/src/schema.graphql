@@ -14,8 +14,31 @@ type Extra {
     product: String
 }
 
+type Coffee {
+    id: String
+    name: String
+}
+
 type Query {
     getHello: Hello
     something: Product
     product: Extra
+    getProduct(id: String): Coffee
 }
+
+
+input CreateProductInput {
+    id: String
+    name: String
+}
+
+input RemoveProductInput {
+    id: String
+}
+
+type Mutation {
+    createProduct(input: CreateProductInput): Coffee
+    removeProduct(input: RemoveProductInput): Coffee
+}
+
+

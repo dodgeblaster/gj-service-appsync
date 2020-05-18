@@ -1,0 +1,259 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`deploy works 1`] = `
+Object {
+  "appsync": Object {
+    "auth": Object {
+      "existingKey": null,
+      "state": "CREATE",
+    },
+    "datasourceIamRoles": Object {
+      "create": Array [
+        Object {
+          "name": "MYNEWAPI5-datasource-LAMBDA-role",
+          "state": "",
+          "type": "AWS_LAMBDA",
+        },
+        Object {
+          "name": "MYNEWAPI5datasourcedbinttestappsyncdb-role",
+          "state": "",
+          "type": "AMAZON_DYNAMODB",
+        },
+      ],
+    },
+    "datasources": Object {
+      "create": Array [
+        Object {
+          "lambdaArn": "arn:aws:lambda:us-east-2:251256923172:function:MYNEWAPI5-lambda",
+          "name": "MYNEWAPI5datasourceLAMBDA",
+          "roleArn": "arn:aws:iam::251256923172:role/MYNEWAPI5-datasource-LAMBDA-role",
+          "roleName": "MYNEWAPI5-datasource-LAMBDA-role",
+          "type": "AWS_LAMBDA",
+        },
+        Object {
+          "name": "MYNEWAPI5datasourcedbinttestappsyncdb",
+          "roleArn": "arn:aws:iam::251256923172:role/MYNEWAPI5datasourcedbinttestappsyncdb-role",
+          "roleName": "MYNEWAPI5datasourcedbinttestappsyncdb-role",
+          "tableName": "int-test-appsyncdb",
+          "type": "AMAZON_DYNAMODB",
+        },
+      ],
+    },
+    "graphQLApi": Object {
+      "rootResource": "CREATE",
+    },
+    "name": "MY NEW API5",
+    "resolvers": Object {
+      "create": Array [
+        Object {
+          "datasource": "MYNEWAPI5datasourceLAMBDA",
+          "field": "getHello",
+          "resolverType": "AWS_LAMBDA",
+          "type": "Query",
+          "vtl": Object {
+            "request": "{ 
+            \\"version\\": \\"2017-02-28\\",
+            \\"operation\\": \\"Invoke\\",
+            \\"payload\\": $util.toJson($ctx)
+        }",
+            "response": "$util.toJson($ctx.result)",
+          },
+        },
+        Object {
+          "datasource": "MYNEWAPI5datasourceLAMBDA",
+          "field": "something",
+          "resolverType": "AWS_LAMBDA",
+          "type": "Query",
+          "vtl": Object {
+            "request": "{ 
+            \\"version\\": \\"2017-02-28\\",
+            \\"operation\\": \\"Invoke\\",
+            \\"payload\\": $util.toJson($ctx)
+        }",
+            "response": "$util.toJson($ctx.result)",
+          },
+        },
+        Object {
+          "datasource": "MYNEWAPI5datasourceLAMBDA",
+          "field": "product",
+          "resolverType": "AWS_LAMBDA",
+          "type": "Query",
+          "vtl": Object {
+            "request": "{ 
+            \\"version\\": \\"2017-02-28\\",
+            \\"operation\\": \\"Invoke\\",
+            \\"payload\\": $util.toJson($ctx)
+        }",
+            "response": "$util.toJson($ctx.result)",
+          },
+        },
+        Object {
+          "datasource": "MYNEWAPI5datasourcedbinttestappsyncdb",
+          "field": "getProduct",
+          "resolverType": "AMAZON_DYNAMODB",
+          "type": "Query",
+          "vtl": Object {
+            "request": "{
+                \\"version\\": \\"2017-02-28\\",
+                \\"operation\\": \\"GetItem\\",
+                \\"key\\": {
+                    \\"id\\": $util.dynamodb.toDynamoDBJson($ctx.args.id)
+                },
+            }",
+            "response": "$util.toJson($ctx.result)",
+          },
+        },
+        Object {
+          "datasource": "MYNEWAPI5datasourcedbinttestappsyncdb",
+          "field": "createProduct",
+          "resolverType": "AMAZON_DYNAMODB",
+          "type": "Mutation",
+          "vtl": Object {
+            "request": "{
+                \\"version\\": \\"2017-02-28\\",
+                \\"operation\\": \\"PutItem\\",
+                \\"key\\": {
+                    \\"id\\": $util.dynamodb.toDynamoDBJson($ctx.args.input.id)
+                },
+                #set ( $ctx.args.input.createdAt = \\"$util.time.nowISO8601()\\" )
+                \\"attributeValues\\": $util.dynamodb.toMapValuesJson($ctx.args.input),
+                \\"condition\\": {
+                    \\"expression\\": \\"attribute_not_exists(#id)\\",
+                    \\"expressionNames\\": {
+                    \\"#id\\": \\"id\\"
+                    },
+                },
+            }",
+            "response": "$util.toJson($ctx.result)",
+          },
+        },
+        Object {
+          "datasource": "MYNEWAPI5datasourcedbinttestappsyncdb",
+          "field": "removeProduct",
+          "resolverType": "AMAZON_DYNAMODB",
+          "type": "Mutation",
+          "vtl": Object {
+            "request": "{
+                \\"version\\": \\"2017-02-28\\",
+                \\"operation\\": \\"DeleteItem\\",
+                \\"key\\": {
+                    \\"id\\": $util.dynamodb.toDynamoDBJson($ctx.args.input.id)
+                },
+            }",
+            "response": "$util.toJson($ctx.result)",
+          },
+        },
+      ],
+    },
+    "schema": Object {
+      "defintion": "type Hello {
+    hello: String
+    id: String
+    name: String
+}
+
+type Product {
+    id: String
+    name: String
+}
+
+type Extra {
+    id: String
+    product: String
+}
+
+type Coffee {
+    id: String
+    name: String
+}
+
+type Query {
+    getHello: Hello
+    something: Product
+    product: Extra
+    getProduct(id: String): Coffee
+}
+
+
+input CreateProductInput {
+    id: String
+    name: String
+}
+
+input RemoveProductInput {
+    id: String
+}
+
+type Mutation {
+    createProduct(input: CreateProductInput): Coffee
+    removeProduct(input: RemoveProductInput): Coffee
+}
+
+
+",
+      "state": "CREATE",
+    },
+  },
+  "monolambda": Object {
+    "iamRole": "CREATE",
+    "lambdaCode": "SKIP",
+    "lambdaConfig": "SKIP",
+  },
+  "projectInfo": Object {
+    "accountId": "251256923172",
+    "id": "",
+    "lambdaDatasourceRole": "",
+    "lambdaRole": "",
+    "name": "MY NEW API5",
+    "projectRoot": "/Users/garyjennings/Desktop/WEBDEV/2020/NPM/gj-service-appsync/exampleProject",
+    "region": "us-east-2",
+    "schema": "type Hello {
+    hello: String
+    id: String
+    name: String
+}
+
+type Product {
+    id: String
+    name: String
+}
+
+type Extra {
+    id: String
+    product: String
+}
+
+type Coffee {
+    id: String
+    name: String
+}
+
+type Query {
+    getHello: Hello
+    something: Product
+    product: Extra
+    getProduct(id: String): Coffee
+}
+
+
+input CreateProductInput {
+    id: String
+    name: String
+}
+
+input RemoveProductInput {
+    id: String
+}
+
+type Mutation {
+    createProduct(input: CreateProductInput): Coffee
+    removeProduct(input: RemoveProductInput): Coffee
+}
+
+
+",
+    "schemaChecksum": "",
+    "srcLocation": "/src",
+  },
+}
+`;
