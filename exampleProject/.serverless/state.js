@@ -1,0 +1,1 @@
+module.exports = {"apiId":"zztmnqoelva4fksjl5ji3d6zqi","apiName":"MY NEW API5","lambdaRoleRole":"MYNEWAPI5-lambda-role","lambdaRole":"MYNEWAPI5-lambda"}

@@ -1,0 +1,14 @@
+app: example-app
+component: appsync
+name: MY NEW API
+
+inputs:
+    region: us-east-2
+    accountId: 251256923172
+
+    # const name = 'MY NEW API'
+    # const PROJECT_ROOT = __dirname + '/..'
+    # const SRC_LOCATION = '/exampleSrc'
+    # const REGION = 'us-east-2'
+    # const ACCOUNT_ID = '251256923172'
+    
