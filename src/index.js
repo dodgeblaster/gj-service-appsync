@@ -8,7 +8,8 @@ const state = require('gj-state')
 
 
 
-module.exports.deploy = async (PROJECT_ROOT, SRC_LOCATION) => {
+module.exports.deploy = async (PROJECT_ROOT) => {
+    const SRC_LOCATION = '/src'
     console.log('Deploying...')
 
 
