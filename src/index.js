@@ -36,10 +36,10 @@ module.exports.deploy = async (PROJECT_ROOT) => {
 
         await lambda.create({
             srcLocation: PROJECT_ROOT + SRC_LOCATION,
-            zipLocation: PROJECT_ROOT + "/.serverless/code.zip",
+            zipLocation: PROJECT_ROOT + "/.config/code.zip",
             name: appsyncLambdaName,
             handler: "index.handler",
-            role: `arn:aws:iam::${ACCOUNT_ID}:role/${appsyncLambdaRole}`,
+            role: `arn:aws:iam::${instructions.projectInfo.accountId}:role/${appsyncLambdaRole}`,
         })
     }
 
@@ -47,7 +47,7 @@ module.exports.deploy = async (PROJECT_ROOT) => {
         console.log('UPDATING CODE...')
         await lambda.updateCode({
             srcLocation: PROJECT_ROOT + SRC_LOCATION,
-            zipLocation: PROJECT_ROOT + "/.serverless/code.zip",
+            zipLocation: PROJECT_ROOT + "/.config/code.zip",
             name: appsyncLambdaName,
         })
     }
