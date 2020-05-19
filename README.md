@@ -113,7 +113,7 @@ module.exports = {
         },
 
         getProduct: {
-            type: 'DYNAMODB',
+            type: 'db',
             action: 'GET',
             table: 'int-test-appsyncdb'
         }
@@ -121,13 +121,13 @@ module.exports = {
 
     Mutation: {
         createProduct: {
-            type: 'DYNAMODB',
+            type: 'db',
             action: 'CREATE',
             table: 'int-test-appsyncdb'
         },
 
         removeProduct: {
-            type: 'DYNAMODB',
+            type: 'db',
             action: 'REMOVE',
             table: 'int-test-appsyncdb'
         },
