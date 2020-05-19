@@ -3,9 +3,7 @@ const vtl = require('./actionToVtl')
 module.exports = (config, res) => {
     const name = config.name.split(' ').join('')
 
-
     const queries = res.Query.reduce((acc, x) => {
-
         if (x.format.startsWith('FUNCTION')) {
             acc.push({
                 resolverType: 'AWS_LAMBDA',
@@ -33,7 +31,6 @@ module.exports = (config, res) => {
     }, [])
 
     const mutations = res.Mutation.reduce((acc, x) => {
-
         if (x.format.startsWith('FUNCTION')) {
             acc.push({
                 resolverType: 'FUNCTION',
@@ -60,10 +57,8 @@ module.exports = (config, res) => {
         return acc
     }, [])
 
-
     return [
         ...queries,
         ...mutations
     ]
-
 }

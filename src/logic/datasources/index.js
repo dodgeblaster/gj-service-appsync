@@ -1,9 +1,6 @@
 module.exports = (config, accountId, region, res) => {
     const name = config.name.split(' ').join('')
 
-
-    // NEW CODE INVOLVES THE FOLLOWING:
-
     let iamroleList = []
     let datasourceList = []
     const mapForNewDatasources = res.Query.reduce((acc, x) => {
@@ -34,7 +31,6 @@ module.exports = (config, accountId, region, res) => {
         datasourceList.push({
             type: 'AWS_LAMBDA',
             name: `${name}datasourceLAMBDA`,
-            //id: apiId,
             lambdaArn: `arn:aws:lambda:${region}:${accountId}:function:${name}-lambda`,
             roleArn: `arn:aws:iam::${accountId}:role/${name}-datasource-LAMBDA-role`,
             roleName: `${name}-datasource-LAMBDA-role`
