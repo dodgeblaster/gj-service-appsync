@@ -29,7 +29,7 @@ module.exports = {
             }
 
             if (typeof file.Query[k] === 'object') {
-                if (file.Query[k].type === 'DYNAMODB') {
+                if (file.Query[k].type === 'db') {
 
                     list.Query.push({
                         name: k,
@@ -56,7 +56,7 @@ module.exports = {
             }
 
             if (typeof file.Mutation[k] === 'object') {
-                if (file.Mutation[k].type === 'DYNAMODB') {
+                if (file.Mutation[k].type === 'db') {
 
                     list.Mutation.push({
                         name: k,
