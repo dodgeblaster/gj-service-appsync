@@ -8,6 +8,6 @@ module.exports = async (projectRoot) => {
     // return await YAML.parse(file)
 
 
-    const res = require(projectRoot + '/config.js')
+    const res = require(projectRoot + '/config.rise.js')
     return res
 }
