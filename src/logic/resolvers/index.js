@@ -42,16 +42,16 @@ module.exports = (config, res) => {
         }
 
         if (x.format === 'DYNAMODB') {
-            const dbType = slsYml.db[x.config.table].type
+            const dbType = config.db[x.config.table].type
 
-            let vtl = {}
+            let vtlDef = {}
             if (dbType === 'relational') {
-                vtl = {
+                vtlDef = {
                     request: vtl.dynamo.simple({PK: 'id'}).request[x.config.action],
                     response: vtl.dynamo.response
                 }
             } else {
-                vtl = {
+                vtlDef = {
                     request: vtl.dynamo.simple({PK: 'id'}).request[x.config.action],
                     response: vtl.dynamo.response
                 }
@@ -63,7 +63,7 @@ module.exports = (config, res) => {
                 resolverType: 'AMAZON_DYNAMODB',
                 type: x.type,
                 field: x.field,
-                vtl,
+                vtl: vtlDef,
                 datasource: `${name}datasourcedb${x.config.table.split(' ').join('').split('-').join('')}`
             })
         }

@@ -4,6 +4,7 @@ const appsync = require('gj-aws-appsync')
 const iam = require('gj-aws-iam')
 const dynamodb = require('gj-aws-dynamodb')
 const state = require('gj-state')
+const copy = require('./utils/files/copyDirectory')
 
 
 
@@ -15,12 +16,24 @@ module.exports.deploy = async (PROJECT_ROOT) => {
 
 
 
+
+
+
+
     /**
      * 1. Build Instructions
      * 
      */
     const instructions = await buildInstructions(PROJECT_ROOT, SRC_LOCATION)
+    copy(
+        PROJECT_ROOT + SRC_LOCATION,
+        PROJECT_ROOT + '/.config/_src'
+    )
 
+    copy(
+        __dirname + '/filesToCopy',
+        PROJECT_ROOT + '/.config/_src'
+    )
 
    
     /**
@@ -36,10 +49,10 @@ module.exports.deploy = async (PROJECT_ROOT) => {
         })
 
         await lambda.create({
-            srcLocation: PROJECT_ROOT + SRC_LOCATION,
+            srcLocation: PROJECT_ROOT + '/.config/_src',
             zipLocation: PROJECT_ROOT + "/.config/code.zip",
             name: appsyncLambdaName,
-            handler: "index.handler",
+            handler: "_index.handler",
             role: `arn:aws:iam::${instructions.projectInfo.accountId}:role/${appsyncLambdaRole}`,
         })
     }
