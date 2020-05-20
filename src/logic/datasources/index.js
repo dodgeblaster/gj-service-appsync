@@ -9,10 +9,14 @@ module.exports = (config, accountId, region, res) => {
         }
 
         if (x.format === 'DYNAMODB') {
+            let tableName = Object.keys(config.db).includes(x.config.table)
+                ? config.name.split(' ').join('').split('-').join('') + x.config.table
+                : x.config.table
+
             acc.dynamodb[x.config.table] = {
                 type: 'DYNAMODB',
                 name: name + 'datasourcedb' + x.config.table.split(' ').join('').split('-').join(''),
-                tableName: x.config.table
+                tableName: tableName
             }
         }
 

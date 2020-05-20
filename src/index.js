@@ -2,6 +2,7 @@ const buildInstructions = require('./logic')
 const lambda = require('gj-aws-lambda')
 const appsync = require('gj-aws-appsync')
 const iam = require('gj-aws-iam')
+const dynamodb = require('gj-aws-dynamodb')
 const state = require('gj-state')
 
 
@@ -56,6 +57,26 @@ module.exports.deploy = async (PROJECT_ROOT) => {
         console.log('mock UPDATING LAMBDA CONFIG...')
     }
     
+
+
+
+    for (const db of instructions.dynamodb.config) {
+        try {
+            const params = {
+                name: db.tableName,
+                PK: 'PK',
+                SK: db.SK ?  'SK' : false,
+                ...(db.GSI1 && {GSI1: 'GSI1'}),
+                ...(db.GSI2 && {GSI2: 'GSI2'})
+            }
+            console.log('db params - ', params)
+            
+            await dynamodb.create(params)
+        } catch(e) {
+            console.log('DB ERROR - ', e)
+        }
+    }
+
     
 
     /**
@@ -76,6 +97,7 @@ module.exports.deploy = async (PROJECT_ROOT) => {
         apiName: appsyncData.apiName,
         appsyncLambdaRole: appsyncLambdaRole,
         appsyncLambdaName: appsyncLambdaName,
+        tables: instructions.dynamodb.config,
         datasourceRoles: instructions.appsync.datasourceIamRoles.create.map(x => x.name)
     }
 
@@ -90,6 +112,7 @@ module.exports.remove = async (PROJECT_ROOT, SRC_LOCATION) => {
     const stateRes = await state('none', '/.config/state.js').read(PROJECT_ROOT)
 
     // iam role lambda
+
     await iam.removeRole(stateRes.appsyncLambdaRole)
     console.log('removed iam lambda role')
 
@@ -101,6 +124,15 @@ module.exports.remove = async (PROJECT_ROOT, SRC_LOCATION) => {
     for (const dsRole of stateRes.datasourceRoles) {
         await iam.removeRole(dsRole)
         console.log('removed datasource role')
+    }
+    
+
+    for (const db of stateRes.tables) {
+        try {
+            await dynamodb.remove(db.tableName)
+        } catch (e) {
+            console.log('db err ', e)
+        }
     }
  
 

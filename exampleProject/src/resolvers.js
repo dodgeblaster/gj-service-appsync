@@ -25,7 +25,7 @@ module.exports = {
         getProduct: {
             type: 'db',
             action: 'GET',
-            table: 'int-test-appsyncdb'
+            table: 'example'
         }
     },
 
@@ -33,13 +33,13 @@ module.exports = {
         createProduct: {
             type: 'db',
             action: 'CREATE',
-            table: 'int-test-appsyncdb'
+            table: 'example'
         },
 
         removeProduct: {
             type: 'db',
             action: 'REMOVE',
-            table: 'int-test-appsyncdb'
+            table: 'example'
         },
     }
 }

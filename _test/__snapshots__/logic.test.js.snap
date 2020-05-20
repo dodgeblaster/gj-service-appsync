@@ -15,7 +15,7 @@ Object {
           "type": "AWS_LAMBDA",
         },
         Object {
-          "name": "MYNEWAPI5datasourcedbinttestappsyncdb-role",
+          "name": "MYNEWAPI5datasourcedbexample-role",
           "state": "",
           "type": "AMAZON_DYNAMODB",
         },
@@ -31,10 +31,10 @@ Object {
           "type": "AWS_LAMBDA",
         },
         Object {
-          "name": "MYNEWAPI5datasourcedbinttestappsyncdb",
-          "roleArn": "arn:aws:iam::251256923172:role/MYNEWAPI5datasourcedbinttestappsyncdb-role",
-          "roleName": "MYNEWAPI5datasourcedbinttestappsyncdb-role",
-          "tableName": "int-test-appsyncdb",
+          "name": "MYNEWAPI5datasourcedbexample",
+          "roleArn": "arn:aws:iam::251256923172:role/MYNEWAPI5datasourcedbexample-role",
+          "roleName": "MYNEWAPI5datasourcedbexample-role",
+          "tableName": "MYNEWAPI5example",
           "type": "AMAZON_DYNAMODB",
         },
       ],
@@ -88,58 +88,58 @@ Object {
           },
         },
         Object {
-          "datasource": "MYNEWAPI5datasourcedbinttestappsyncdb",
+          "datasource": "MYNEWAPI5datasourcedbexample",
           "field": "getProduct",
           "resolverType": "AMAZON_DYNAMODB",
           "type": "Query",
           "vtl": Object {
             "request": "{
-                \\"version\\": \\"2017-02-28\\",
-                \\"operation\\": \\"GetItem\\",
-                \\"key\\": {
-                    \\"id\\": $util.dynamodb.toDynamoDBJson($ctx.args.id)
-                },
-            }",
+                    \\"version\\": \\"2017-02-28\\",
+                    \\"operation\\": \\"GetItem\\",
+                    \\"key\\": {
+                        \\"PK\\": $util.dynamodb.toDynamoDBJson($ctx.args.id)
+                    },
+                }",
             "response": "$util.toJson($ctx.result)",
           },
         },
         Object {
-          "datasource": "MYNEWAPI5datasourcedbinttestappsyncdb",
+          "datasource": "MYNEWAPI5datasourcedbexample",
           "field": "createProduct",
           "resolverType": "AMAZON_DYNAMODB",
           "type": "Mutation",
           "vtl": Object {
             "request": "{
-                \\"version\\": \\"2017-02-28\\",
-                \\"operation\\": \\"PutItem\\",
-                \\"key\\": {
-                    \\"id\\": $util.dynamodb.toDynamoDBJson($ctx.args.input.id)
-                },
-                #set ( $ctx.args.input.createdAt = \\"$util.time.nowISO8601()\\" )
-                \\"attributeValues\\": $util.dynamodb.toMapValuesJson($ctx.args.input),
-                \\"condition\\": {
-                    \\"expression\\": \\"attribute_not_exists(#id)\\",
-                    \\"expressionNames\\": {
-                    \\"#id\\": \\"id\\"
+                    \\"version\\": \\"2017-02-28\\",
+                    \\"operation\\": \\"PutItem\\",
+                    \\"key\\": {
+                        \\"PK\\": $util.dynamodb.toDynamoDBJson($ctx.args.input.id)
                     },
-                },
-            }",
+                    #set ( $ctx.args.input.createdAt = \\"$util.time.nowISO8601()\\" )
+                    \\"attributeValues\\": $util.dynamodb.toMapValuesJson($ctx.args.input),
+                    \\"condition\\": {
+                        \\"expression\\": \\"attribute_not_exists(#PK)\\",
+                        \\"expressionNames\\": {
+                        \\"#PK\\": \\"PK\\"
+                        },
+                    },
+                }",
             "response": "$util.toJson($ctx.result)",
           },
         },
         Object {
-          "datasource": "MYNEWAPI5datasourcedbinttestappsyncdb",
+          "datasource": "MYNEWAPI5datasourcedbexample",
           "field": "removeProduct",
           "resolverType": "AMAZON_DYNAMODB",
           "type": "Mutation",
           "vtl": Object {
             "request": "{
-                \\"version\\": \\"2017-02-28\\",
-                \\"operation\\": \\"DeleteItem\\",
-                \\"key\\": {
-                    \\"id\\": $util.dynamodb.toDynamoDBJson($ctx.args.input.id)
-                },
-            }",
+                    \\"version\\": \\"2017-02-28\\",
+                    \\"operation\\": \\"DeleteItem\\",
+                    \\"key\\": {
+                        \\"PK\\": $util.dynamodb.toDynamoDBJson($ctx.args.input.id)
+                    },
+                }",
             "response": "$util.toJson($ctx.result)",
           },
         },
@@ -193,6 +193,20 @@ type Mutation {
 ",
       "state": "CREATE",
     },
+  },
+  "dynamodb": Object {
+    "config": Array [
+      Object {
+        "GSI1": "orgId",
+        "PK": "userId",
+        "SK": "id",
+        "tableName": "MYNEWAPI5notes",
+      },
+      Object {
+        "PK": "id",
+        "tableName": "MYNEWAPI5example",
+      },
+    ],
   },
   "monolambda": Object {
     "iamRole": "CREATE",

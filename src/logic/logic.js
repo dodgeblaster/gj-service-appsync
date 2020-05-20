@@ -6,6 +6,44 @@ const makeResolverInstructions  = require('./resolvers')
 module.exports = async ({ slsYml, slsState, schema, resolvers, projectRoot, srcLocation, accountId }) => {
     const region = slsYml.region || 'us-east-2'
 
+    const dbConfig = Object.keys(slsYml.db).reduce((acc, x) => {
+        const db = slsYml.db[x]
+        if (db.type === 'relational') {
+            let def = {
+                tableName: slsYml.name.split(' ').join('').split('-').join('') + x,
+                SK:  db.id
+            }
+            Object.keys(db)
+            .filter(x => db[x] === 'relationship')
+            .forEach((x, i) => {
+                if (i === 0) {
+                    def.PK = x
+                }
+                if (i === 1) {
+                    def.GSI1 = x
+                }
+                if (i === 2) {
+                    def.GSI2 = x
+                }
+            })   
+            
+            acc.push(def)
+        }
+
+        if (db.type === 'simple') {
+            let def = {
+                tableName: slsYml.name.split(' ').join('').split('-').join('') + x,
+                PK:  db.id
+            }
+            acc.push(def)
+        }
+
+
+        return acc
+    }, [])
+
+    console.log('+++ ', dbConfig)
+
     const generatedDatasources = slsState === 'EMPTY'
         ? makeDatasourceInstructions(slsYml, accountId, region, resolvers)
         : {
@@ -98,6 +136,9 @@ module.exports = async ({ slsYml, slsState, schema, resolvers, projectRoot, srcL
             iamRole: monolambda.iamRole(),
             lambdaConfig: monolambda.lambdaConfig(),
             lambdaCode: monolambda.lambdaCode(),
+        },
+        dynamodb: {
+            config: dbConfig
         },
         appsync: {
             name: slsYml.name,
