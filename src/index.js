@@ -25,6 +25,8 @@ module.exports.deploy = async (PROJECT_ROOT) => {
      * 
      */
     const instructions = await buildInstructions(PROJECT_ROOT, SRC_LOCATION)
+    
+    console.log('INST - ', instructions)
     copy(
         PROJECT_ROOT + SRC_LOCATION,
         PROJECT_ROOT + '/.config/_src'

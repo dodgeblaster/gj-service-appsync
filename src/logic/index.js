@@ -26,7 +26,6 @@ module.exports = async (projectRoot, srcLocation) => {
     const resolvers = await usersProject.getResolversBasedOnFile(projectRoot)
     const accountId = slsYml.accountId || await awsAccount.getAccountId()
     // const schema = await usersProject.getUsersSchema(projectRoot, srcLocation)
-    
 
     return logic({ slsYml, slsState, schema, resolvers, projectRoot, srcLocation, accountId })
 }

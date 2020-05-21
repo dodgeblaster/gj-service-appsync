@@ -11,22 +11,18 @@ module.exports = async ({ slsYml, slsState, schema, resolvers, projectRoot, srcL
         if (db.type === 'relational') {
             let def = {
                 tableName: slsYml.name.split(' ').join('').split('-').join('') + x,
-                SK:  db.id
+                PK: 'PK',
+                SK:  'SK',
             }
-            Object.keys(db)
-            .filter(x => db[x] === 'relationship')
-            .forEach((x, i) => {
-                if (i === 0) {
-                    def.PK = x
-                }
-                if (i === 1) {
-                    def.GSI1 = x
-                }
-                if (i === 2) {
-                    def.GSI2 = x
-                }
-            })   
-            
+
+            if (db.tag2) {
+                def.GSI1 = 'GSI1'
+            }
+
+            if (db.tag3) {
+                def.GSI2 = 'GSI2'
+            }
+
             acc.push(def)
         }
 
@@ -42,7 +38,9 @@ module.exports = async ({ slsYml, slsState, schema, resolvers, projectRoot, srcL
         return acc
     }, [])
 
-    console.log('+++ ', dbConfig)
+
+ 
+ 
 
     const generatedDatasources = slsState === 'EMPTY'
         ? makeDatasourceInstructions(slsYml, accountId, region, resolvers)
@@ -50,9 +48,16 @@ module.exports = async ({ slsYml, slsState, schema, resolvers, projectRoot, srcL
             iamroleList: [],
             datasourceList: []
         }
+
+
+
+    
+    
     const generatedResources = slsState === 'EMPTY'
         ? makeResolverInstructions(slsYml, resolvers)
         : []
+
+    console.log('+++ VTL ', generatedResources[3].vtl.request)
 
     // Mono Lambda
     const monolambda = {

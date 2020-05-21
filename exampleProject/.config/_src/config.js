@@ -6,9 +6,8 @@ module.exports = {
         // as long as these things belong to both users and orgs
         notes: {
             type: 'relational',
-            id: 'id',
-            userId: 'relationship',
-            orgId: 'relationship'
+            tag1: true,
+            tag2: true
         },
     
         example: {

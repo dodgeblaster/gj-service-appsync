@@ -22,6 +22,16 @@ module.exports = {
             }
         },
 
+        getOrgsNotes: {
+            type: 'db',
+            action: 'LIST',
+            table: 'notes',
+            mapping: {
+                tag1: 'org',
+                id: '*note'
+            }
+        },
+
         getProduct: {
             type: 'db',
             action: 'GET',

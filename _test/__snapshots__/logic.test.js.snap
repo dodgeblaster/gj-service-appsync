@@ -15,6 +15,11 @@ Object {
           "type": "AWS_LAMBDA",
         },
         Object {
+          "name": "MYNEWAPI5datasourcedbnotes-role",
+          "state": "",
+          "type": "AMAZON_DYNAMODB",
+        },
+        Object {
           "name": "MYNEWAPI5datasourcedbexample-role",
           "state": "",
           "type": "AMAZON_DYNAMODB",
@@ -29,6 +34,13 @@ Object {
           "roleArn": "arn:aws:iam::251256923172:role/MYNEWAPI5-datasource-LAMBDA-role",
           "roleName": "MYNEWAPI5-datasource-LAMBDA-role",
           "type": "AWS_LAMBDA",
+        },
+        Object {
+          "name": "MYNEWAPI5datasourcedbnotes",
+          "roleArn": "arn:aws:iam::251256923172:role/MYNEWAPI5datasourcedbnotes-role",
+          "roleName": "MYNEWAPI5datasourcedbnotes-role",
+          "tableName": "MYNEWAPI5notes",
+          "type": "AMAZON_DYNAMODB",
         },
         Object {
           "name": "MYNEWAPI5datasourcedbexample",
@@ -84,6 +96,39 @@ Object {
             \\"operation\\": \\"Invoke\\",
             \\"payload\\": $util.toJson($ctx)
         }",
+            "response": "$util.toJson($ctx.result)",
+          },
+        },
+        Object {
+          "datasource": "MYNEWAPI5datasourcedbnotes",
+          "field": "getOrgsNotes",
+          "resolverType": "AMAZON_DYNAMODB",
+          "type": "Query",
+          "vtl": Object {
+            "request": "{
+                    \\"version\\": \\"2017-02-28\\",
+                    \\"operation\\": \\"Query\\",
+                    \\"key\\": {
+                        \\"PK\\": $util.dynamodb.toDynamoDBJson($ctx.args.org),
+                        
+                        
+                        \\"SK\\": \\"note\\"
+                       
+                    \\"filter\\": #if($context.args.filter) $util.transform.toDynamoDBFilterExpression($ctx.args.filter) #else null #end,
+                    \\"limit\\": $util.defaultIfNull($ctx.args.limit, 20),
+                    \\"nextToken\\": $util.toJson($util.defaultIfNullOrEmpty($ctx.args.nextToken, null)),
+                    \\"condition\\": {
+                        \\"expression\\": \\"PK = :pk AND begins_with(SK, :sk)\\",
+                        \\"expressionNames\\": {
+                            \\":pk\\": \\"PK\\",
+                            \\":sk\\": \\"SK\\"
+                        }
+                        
+                        
+   
+   
+                    },
+                }",
             "response": "$util.toJson($ctx.result)",
           },
         },
@@ -197,9 +242,9 @@ type Mutation {
   "dynamodb": Object {
     "config": Array [
       Object {
-        "GSI1": "orgId",
-        "PK": "userId",
-        "SK": "id",
+        "GSI1": "GSI1",
+        "PK": "PK",
+        "SK": "SK",
         "tableName": "MYNEWAPI5notes",
       },
       Object {
